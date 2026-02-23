@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Irc7.LoadTester.MainWindow"
+        Title="irc7 Load Tester" Width="1500" Height="700">
+
+  <Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="*">
+    <StackPanel Orientation="Vertical" Margin="0" Spacing="0">
+      <Menu>
+        <MenuItem Header="Settings">
+          <MenuItem Name="MenuSendPrivmsg" Header="Send PRIVMSG" />
+          <MenuItem Name="MenuLogToFile" Header="Log to file" />
+          <MenuItem Header="Refresh Interval">
+            <MenuItem Name="Interval1s" Header="1 s" Tag="1000" />
+            <MenuItem Name="Interval2s" Header="2 s" Tag="2000" />
+            <MenuItem Name="Interval5s" Header="5 s" Tag="5000" />
+            <MenuItem Name="Interval10s" Header="10 s" Tag="10000" />
+            <MenuItem Name="Interval30s" Header="30 s" Tag="30000" />
+          </MenuItem>
+        </MenuItem>
+      </Menu>
+
+      <StackPanel Orientation="Horizontal" Margin="8" Spacing="8">
+        <TextBlock Text="Host:" VerticalAlignment="Center"/>
+        <TextBox Name="HostBox" Width="180" Text="localhost"/>
+        <TextBlock Text="Port:" VerticalAlignment="Center"/>
+        <TextBox Name="PortBox" Width="80" Text="6667"/>
+        <TextBlock Text="Connections:" VerticalAlignment="Center"/>
+        <TextBox Name="CountBox" Width="80" Text="10"/>
+        <TextBlock Text="Nick Prefix:" VerticalAlignment="Center"/>
+        <TextBox Name="NickPrefixBox" Width="120" Text="TestUser"/>
+        <TextBlock Text="Channel:" VerticalAlignment="Center"/>
+        <TextBox Name="ChannelBox" Width="120" Text="%#Test"/>
+        <Button Name="StartButton" Content="Start"/>
+        <Button Name="StopButton" Content="Stop" IsEnabled="False"/>
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" Margin="4 0 8 8" Spacing="8">
+        <CheckBox Name="SendPrivmsgBox" Content="Send PRIVMSG" IsChecked="True" VerticalAlignment="Center"/>
+        <ComboBox Name="IntervalBox" Width="80" SelectedIndex="0">
+          <ComboBoxItem Content="1s" Tag="1000"/>
+          <ComboBoxItem Content="2s" Tag="2000"/>
+          <ComboBoxItem Content="5s" Tag="5000"/>
+          <ComboBoxItem Content="10s" Tag="10000"/>
+        </ComboBox>
+      </StackPanel>
+
+    </StackPanel>
+
+    <Grid Grid.Row="1" Margin="8">
+      <TextBlock Text="Per-connection UI removed — running in headless/status-only mode." VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+
+    <!-- Status bar -->
+    <Border Grid.Row="2" Background="#EEE" Padding="6">
+      <StackPanel Orientation="Horizontal" Spacing="16">
+        <TextBlock Text="Total:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusTotal" Text="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Connected:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusConnected" Text="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Joined:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusJoined" Text="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Msg recv:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusRecv" Text="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Msg sent:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusSent" Text="0" VerticalAlignment="Center"/>
+        <TextBlock Text="Bytes recv:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusBytesRecv" Text="0 B" VerticalAlignment="Center"/>
+        <TextBlock Text="Bytes sent:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusBytesSent" Text="0 B" VerticalAlignment="Center"/>
+        <TextBlock Text="Errors:" VerticalAlignment="Center"/>
+        <TextBlock Name="StatusErrors" Text="0" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>
