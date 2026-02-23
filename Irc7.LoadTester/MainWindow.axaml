@@ -10,6 +10,8 @@
         <MenuItem Header="Settings">
           <MenuItem Name="MenuSendPrivmsg" Header="Send PRIVMSG" />
           <MenuItem Name="MenuLogToFile" Header="Log to file" />
+          <MenuItem Name="MenuVerboseLog" Header="Verbose log" />
+          <MenuItem Name="MenuScreenLog" Header="Screen log" />
           <MenuItem Header="Refresh Interval">
             <MenuItem Name="Interval1s" Header="1 s" Tag="1000" />
             <MenuItem Name="Interval2s" Header="2 s" Tag="2000" />
@@ -20,39 +22,84 @@
         </MenuItem>
       </Menu>
 
-      <StackPanel Orientation="Horizontal" Margin="8" Spacing="8">
-        <TextBlock Text="Host:" VerticalAlignment="Center"/>
-        <TextBox Name="HostBox" Width="180" Text="localhost"/>
-        <TextBlock Text="Port:" VerticalAlignment="Center"/>
-        <TextBox Name="PortBox" Width="80" Text="6667"/>
-        <TextBlock Text="Connections:" VerticalAlignment="Center"/>
-        <TextBox Name="CountBox" Width="80" Text="10"/>
-        <TextBlock Text="Nick Prefix:" VerticalAlignment="Center"/>
-        <TextBox Name="NickPrefixBox" Width="120" Text="TestUser"/>
-        <TextBlock Text="Channel:" VerticalAlignment="Center"/>
-        <TextBox Name="ChannelBox" Width="120" Text="%#Test"/>
-        <Button Name="StartButton" Content="Start"/>
-        <Button Name="StopButton" Content="Stop" IsEnabled="False"/>
-      </StackPanel>
+      <TabControl Margin="8">
+        <TabItem Header="Connections">
+          <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Host:" VerticalAlignment="Center"/>
+              <TextBox Name="HostBox" Width="180" Text="localhost"/>
+              <TextBlock Text="Port:" VerticalAlignment="Center"/>
+              <TextBox Name="PortBox" Width="80" Text="6667"/>
+              <TextBlock Text="Connections:" VerticalAlignment="Center"/>
+              <TextBox Name="CountBox" Width="80" Text="10"/>
+            </StackPanel>
 
-      <StackPanel Orientation="Horizontal" Margin="4 0 8 8" Spacing="8">
-        <CheckBox Name="SendPrivmsgBox" Content="Send PRIVMSG" IsChecked="True" VerticalAlignment="Center"/>
-        <ComboBox Name="IntervalBox" Width="80" SelectedIndex="0">
-          <ComboBoxItem Content="1s" Tag="1000"/>
-          <ComboBoxItem Content="2s" Tag="2000"/>
-          <ComboBoxItem Content="5s" Tag="5000"/>
-          <ComboBoxItem Content="10s" Tag="10000"/>
-        </ComboBox>
-      </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Nick Prefix:" VerticalAlignment="Center"/>
+              <TextBox Name="NickPrefixBox" Width="200" Text="TestUser"/>
+              <TextBlock Text="Channel:" VerticalAlignment="Center"/>
+              <TextBox Name="ChannelBox" Width="200" Text="%#Test"/>
+              <TextBlock Text="Cycle sockets:" VerticalAlignment="Center"/>
+              <CheckBox Name="CycleSocketsBox" Content="Cycle" VerticalAlignment="Center"/>
+              <TextBlock Text="Grace ms:" VerticalAlignment="Center"/>
+              <TextBox Name="CycleGraceBox" Width="80" Text="5000"/>
+              <CheckBox Name="VerboseLogBox" Content="Verbose log" VerticalAlignment="Center"/>
+              <CheckBox Name="ScreenLogBoxUI" Content="Screen log" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Name="StartButton" Content="Start" Width="100"/>
+              <Button Name="StopButton" Content="Stop" Width="100" IsEnabled="False"/>
+            </StackPanel>
+          </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Join/Part">
+          <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Join/Part channel:" VerticalAlignment="Center"/>
+              <TextBox Name="JoinPartBox" Width="220" Text="%#Test"/>
+              <TextBlock Text="Interval:" VerticalAlignment="Center"/>
+              <TextBox Name="JoinPartIntervalBox" Width="120" Text="5000"/>
+            </StackPanel>
+            <TextBlock Text="(Join/Part controls are for UI configuration; join/part logic runs in manager.)" Opacity="0.7"/>
+          </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Privmsg">
+          <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <CheckBox Name="SendPrivmsgBox" Content="Send PRIVMSG" IsChecked="True" VerticalAlignment="Center"/>
+              <TextBlock Text="Interval:" VerticalAlignment="Center"/>
+              <ComboBox Name="IntervalBox" Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="1s" Tag="1000"/>
+                <ComboBoxItem Content="2s" Tag="2000"/>
+                <ComboBoxItem Content="5s" Tag="5000"/>
+                <ComboBoxItem Content="10s" Tag="10000"/>
+              </ComboBox>
+              <TextBlock Text="Privmsg length:" VerticalAlignment="Center"/>
+              <TextBox Name="PrivmsgLengthBox" Width="120" Text="32"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Estimated PRIVMSG bytes:" VerticalAlignment="Center"/>
+              <TextBlock Name="StatusPrivmsgBytes" Text="0 B" VerticalAlignment="Center"/>
+            </StackPanel>
+          </StackPanel>
+        </TabItem>
+      </TabControl>
 
     </StackPanel>
 
     <Grid Grid.Row="1" Margin="8">
-      <TextBlock Text="Per-connection UI removed — running in headless/status-only mode." VerticalAlignment="Center" HorizontalAlignment="Center"/>
+      <StackPanel>
+        <TextBlock Text="Per-connection UI removed — running in headless/status-only mode." VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBox Name="ScreenLogBox" IsReadOnly="True" AcceptsReturn="True" Height="240" TextWrapping="Wrap"/>
+      </StackPanel>
     </Grid>
 
-    <!-- Status bar -->
-    <Border Grid.Row="2" Background="#EEE" Padding="6">
+    <!-- Status bar (remove hard-coded background so theme is used) -->
+    <Border Grid.Row="2" Padding="6">
       <StackPanel Orientation="Horizontal" Spacing="16">
         <TextBlock Text="Total:" VerticalAlignment="Center"/>
         <TextBlock Name="StatusTotal" Text="0" VerticalAlignment="Center"/>

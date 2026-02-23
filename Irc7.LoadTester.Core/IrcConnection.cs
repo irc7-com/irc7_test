@@ -29,6 +29,7 @@ namespace Irc7.LoadTester.Core
         public event Action<int, Exception>? Error;
         public event Action<int, long>? BytesReceived;
         public event Action<int, long>? BytesSent;
+        public event Action<int, string>? SentLine;
 
         public IrcConnection(int id, string nick, string user, string channel)
         {
@@ -52,7 +53,7 @@ namespace Irc7.LoadTester.Core
                         var dir = System.IO.Path.Combine(AppContext.BaseDirectory, "logs");
                         try { System.IO.Directory.CreateDirectory(dir); } catch { }
                         var path = System.IO.Path.Combine(dir, $"conn_{_id}.log");
-                        _fileWriter = new System.IO.StreamWriter(System.IO.File.Open(path, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read)) { AutoFlush = true };
+                        _fileWriter = new System.IO.StreamWriter(System.IO.File.Open(path, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read), Encoding.ASCII) { AutoFlush = true };
                         _fileWriter.WriteLine($"--- Log started {DateTime.UtcNow:O} ---");
                     }
                     else
@@ -110,7 +111,7 @@ namespace Irc7.LoadTester.Core
                     int read = await _stream.ReadAsync(buffer.AsMemory(0, buffer.Length), _cts.Token).ConfigureAwait(false);
                     if (read == 0) break;
                     try { BytesReceived?.Invoke(_id, read); } catch { }
-                    var s = Encoding.UTF8.GetString(buffer, 0, read);
+                    var s = Encoding.ASCII.GetString(buffer, 0, read);
                     sb.Append(s);
                     string accum = sb.ToString();
                     int idx;
@@ -161,7 +162,7 @@ namespace Irc7.LoadTester.Core
             }
             finally
             {
-                try { Console.WriteLine($"ReceiveLoop: conn {_id} exiting"); } catch { }
+                try { /* verbose logging via manager only */ } catch { }
                 StatusChanged?.Invoke(_id, "Closed");
                 Dispose();
             }
@@ -171,9 +172,10 @@ namespace Irc7.LoadTester.Core
         {
             if (_stream == null) throw new InvalidOperationException("Not connected");
             if (!command.EndsWith("\r\n")) command += "\r\n";
-            var bytes = Encoding.UTF8.GetBytes(command);
+            var bytes = Encoding.ASCII.GetBytes(command);
             await _stream.WriteAsync(bytes.AsMemory(0, bytes.Length), cancellationToken).ConfigureAwait(false);
             try { BytesSent?.Invoke(_id, bytes.Length); } catch { }
+            try { SentLine?.Invoke(_id, command.TrimEnd('\r','\n')); } catch { }
             // write sent data to per-connection log if enabled
             try
             {
@@ -197,7 +199,7 @@ namespace Irc7.LoadTester.Core
         {
             try
             {
-                try { Console.WriteLine($"Dispose: conn {_id} canceling token"); } catch { }
+                try { /* verbose logging via manager only */ } catch { }
                 _cts?.Cancel();
             }
             catch { }
@@ -209,9 +211,9 @@ namespace Irc7.LoadTester.Core
             {
                 if (_receiveTask != null && !_receiveTask.IsCompleted)
                 {
-                    try { Console.WriteLine($"Dispose: conn {_id} waiting for receive task to complete"); } catch { }
+                    try { /* verbose logging via manager only */ } catch { }
                     _receiveTask.Wait(500);
-                    try { Console.WriteLine($"Dispose: conn {_id} receive task completed or timed out"); } catch { }
+                    try { /* verbose logging via manager only */ } catch { }
                 }
             }
             catch { }
